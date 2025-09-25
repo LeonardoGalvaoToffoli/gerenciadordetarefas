@@ -1,12 +1,10 @@
-# --- Estágio 1: Build ---
-FROM eclipse-temurin:17-jdk-jammy as builder
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY . .
 RUN mvn -B package -DskipTests
 
-# --- Estágio 2: Runtime ---
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
